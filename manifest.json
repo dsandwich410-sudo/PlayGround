@@ -1,0 +1,16 @@
+{
+  "name": "Frontline 32 — Tactical Command",
+  "short_name": "Frontline 32",
+  "description": "A touch-first turn-based strategy war game on a 32×32 field.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#0b1310",
+  "theme_color": "#0b1310",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

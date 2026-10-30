@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0b1310" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Frontline 32 — Tactical Command</title>
+  <meta name="description" content="A touch-first turn-based strategy war game on a 32×32 field. Command infantry, armour and artillery. Optional tilt controls." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b1310'/%3E%3Cpath d='M16 5 28 27H4Z' fill='none' stroke='%237fe0a6' stroke-width='1.8'/%3E%3Cpath d='M16 12 22 24H10Z' fill='%237fe0a6' opacity='.32'/%3E%3Cpath d='M11 20.5h10' stroke='%237fe0a6' stroke-width='1.8'/%3E%3C/svg%3E" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app" class="app">
+
+    <canvas id="board" aria-label="32 by 32 tactical battlefield. Drag to pan, pinch to zoom, tap to select units."></canvas>
+    <div class="screen-vignette" aria-hidden="true"></div>
+
+    <!-- ── Top command bar ─────────────────────────────────────────────── -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 28 28"><path d="M14 2 26 24H2Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M14 8.5 20.6 21H7.4Z" fill="currentColor" opacity=".26"/><path d="M9 17.5h10" stroke="currentColor" stroke-width="1.6"/></svg>
+        </div>
+        <div class="brand-copy">
+          <span>FRONTLINE</span>
+          <b>SECTOR&nbsp;32</b>
+        </div>
+      </div>
+
+      <div class="resource-strip" aria-label="Resources">
+        <div class="resource">
+          <span class="res-emblem credit" aria-hidden="true">◈</span>
+          <span class="resource-copy"><small>FUNDS</small><b id="goldValue">300</b></span>
+        </div>
+        <div class="resource">
+          <span class="res-emblem flag" aria-hidden="true"></span>
+          <span class="resource-copy"><small>SECTOR</small><b id="cityValue">1/8</b></span>
+        </div>
+      </div>
+
+      <div class="turn-chip" id="turnChip">
+        <i class="turn-dot"></i>
+        <span id="turnLabel">YOUR TURN</span>
+        <b id="turnNumber">01</b>
+      </div>
+
+      <div class="top-actions">
+        <button class="icon-btn tilt-btn" id="tiltBtn" aria-pressed="false" aria-label="Enable tilt controls" title="Tilt controls">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.2" y="2.6" width="11.6" height="18.8" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8.5 5.5h7" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="17.6" r="1.1" fill="currentColor"/><path d="M3.2 9.5 1 12l2.2 2.5M20.8 9.5 23 12l-2.2 2.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <span class="icon-btn-label">TILT</span>
+        </button>
+        <button class="icon-btn" id="soundBtn" aria-pressed="true" aria-label="Mute sound" title="Sound">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.2L12 18.5v-13L7.2 9.5H4Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path class="sound-waves" d="M15 8.4a5 5 0 0 1 0 7.2M17.7 5.8a8.4 8.4 0 0 1 0 12.4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <button class="icon-btn" id="helpBtn" aria-label="How to play" title="Field manual">
+          <span class="help-glyph">?</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="objective-ribbon" id="objectiveRibbon">
+      <span class="objective-kicker">OBJECTIVE</span>
+      <span id="objectiveText">Seize the enemy HQ</span>
+    </div>
+
+    <!-- ── Toast stack ─────────────────────────────────────────────────── -->
+    <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+    <!-- ── Minimap ─────────────────────────────────────────────────────── -->
+    <div class="minimap-shell" id="minimapShell">
+      <div class="minimap-head"><span>FIELD MAP</span><span>32×32</span></div>
+      <canvas id="minimap" width="176" height="176" aria-label="Minimap. Tap to jump the camera."></canvas>
+      <div class="minimap-hint">TAP TO JUMP</div>
+    </div>
+
+    <!-- ── Bottom command dock ─────────────────────────────────────────── -->
+    <div class="bottom-dock">
+      <div class="unit-panel" id="unitPanel">
+        <div class="unit-emblem" id="unitEmblem">
+          <span class="emblem-placeholder">◎</span>
+        </div>
+        <div class="unit-body">
+          <div class="unit-heading">
+            <div>
+              <span class="unit-faction" id="unitFaction">NO UNIT SELECTED</span>
+              <b class="unit-name" id="unitName">Field Command</b>
+            </div>
+            <span class="unit-state" id="unitState"></span>
+          </div>
+          <div class="unit-hint" id="unitHint">Tap one of your units, then tap a highlighted tile to move.</div>
+          <div class="unit-meters" id="unitMeters" hidden>
+            <div class="meter hp"><span>ARMOUR</span><i><em id="hpBar"></em></i><b id="hpValue">100</b></div>
+            <div class="unit-stats">
+              <span><small>ATK</small><b id="statAtk">—</b></span>
+              <span><small>DEF</small><b id="statDef">—</b></span>
+              <span><small>MOVE</small><b id="statMove">—</b></span>
+              <span><small>RANGE</small><b id="statRange">—</b></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dock-actions">
+        <button class="btn ghost" id="holdBtn" disabled>
+          <span>Hold</span>
+          <small>Finish unit</small>
+        </button>
+        <button class="btn end-turn" id="endTurnBtn">
+          <span class="btn-arrow" id="endTurnArrow">▸</span>
+          <span class="end-turn-copy"><b id="endTurnLabel">End Turn</b><small id="endTurnSub">ENEMY PHASE</small></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Turn banner ─────────────────────────────────────────────────── -->
+    <div class="turn-banner" id="turnBanner" aria-live="polite">
+      <span></span>
+      <b></b>
+      <small></small>
+    </div>
+
+    <!-- ── Build sheet ─────────────────────────────────────────────────── -->
+    <div class="scrim" id="sheetScrim" hidden></div>
+    <section class="sheet" id="citySheet" hidden aria-label="Deploy units">
+      <div class="sheet-grab" aria-hidden="true"></div>
+      <header class="sheet-head">
+        <div>
+          <span class="sheet-kicker" id="cityKicker">DEPLOYMENT</span>
+          <h2 id="cityName">Meridian</h2>
+          <p id="cityMeta">Income 35 · Garrison empty</p>
+        </div>
+        <button class="icon-btn sheet-close" id="cityClose" aria-label="Close deployment">✕</button>
+      </header>
+      <div class="build-grid" id="buildGrid"></div>
+      <footer class="sheet-foot">
+        <span>Units deploy ready next turn.</span>
+        <span>Funds <b id="sheetGold">300</b></span>
+      </footer>
+    </section>
+
+    <!-- ── Intro overlay ───────────────────────────────────────────────── -->
+    <section class="overlay intro" id="intro">
+      <div class="intro-grid" aria-hidden="true"></div>
+      <div class="intro-card">
+        <div class="intro-eyebrow"><span></span> TACTICAL COMMAND · 32×32</div>
+        <h1>FRONTLINE<br><em>SECTOR 32</em></h1>
+        <p class="intro-lede">A pocket war for the river valley. Take ground, break the line, and fly your flag over the enemy HQ.</p>
+        <div class="intro-tips">
+          <div><b>01</b><span>Tap a unit, then a highlighted tile.</span></div>
+          <div><b>02</b><span>Capture cities to earn funds.</span></div>
+          <div><b>03</b><span>Drag to pan · pinch to zoom.</span></div>
+        </div>
+        <button class="btn start-btn" id="startBtn">
+          <span>Start game</span>
+          <svg viewBox="0 0 32 14" aria-hidden="true"><path d="M1 7h27M22 1l7 6-7 6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+        </button>
+        <div class="intro-foot">
+          <span class="live-dot"></span> Turn-based · Touch first · Tilt optional
+        </div>
+      </div>
+      <div class="intro-stamp" aria-hidden="true">FIELD ORDER<br>NO. 032</div>
+    </section>
+
+    <!-- ── Manual ──────────────────────────────────────────────────────── -->
+    <div class="scrim" id="manualScrim" hidden></div>
+    <section class="manual" id="manual" hidden aria-label="Field manual">
+      <header>
+        <div>
+          <span class="sheet-kicker">FIELD MANUAL</span>
+          <h2>How to hold the line</h2>
+        </div>
+        <button class="icon-btn sheet-close" id="manualClose" aria-label="Close manual">✕</button>
+      </header>
+      <div class="manual-body">
+        <div class="manual-col">
+          <h3>Command</h3>
+          <ul>
+            <li><b>Tap</b> a friendly unit to select it.</li>
+            <li><b>Tap a teal tile</b> to move. Tap a red target to fire.</li>
+            <li><b>Drag</b> the field to pan. <b>Pinch</b> or scroll to zoom.</li>
+            <li><b>Hold</b> ends a unit's turn without acting.</li>
+          </ul>
+          <h3>Take ground</h3>
+          <ul>
+            <li>Move onto a city to capture it. Cities pay funds every turn.</li>
+            <li>Infantry are cheap and fast through rough ground. Battle tanks hit hard.</li>
+            <li>Artillery fires at range 2–3 and never takes a counterattack.</li>
+            <li>Capture the enemy HQ to win. Lose yours and the sector falls.</li>
+          </ul>
+        </div>
+        <div class="manual-col">
+          <h3>Tilt controls</h3>
+          <ul>
+            <li>Tap <b>Tilt</b> to pan the camera by moving your device.</li>
+            <li>On iOS, motion access must be granted in the prompt.</li>
+            <li>Tap Tilt again to switch it off and recalibrate.</li>
+          </ul>
+          <h3>Field notes</h3>
+          <ul>
+            <li>Terrain raises defence — forests, hills and cities.</li>
+            <li>Units on friendly cities repair 25 armour at turn start.</li>
+            <li>Direct-fire units counterattack. Artillery does not.</li>
+          </ul>
+          <div class="manual-actions">
+            <button class="btn ghost" id="newGameBtn">New operation</button>
+            <button class="btn compact" id="manualDone">Back to field</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Game over ───────────────────────────────────────────────────── -->
+    <section class="overlay gameover" id="gameOver" hidden>
+      <div class="gameover-card">
+        <span class="gameover-kicker" id="gameOverKicker">OPERATION COMPLETE</span>
+        <h2 id="gameOverTitle">SECTOR SECURED</h2>
+        <p id="gameOverText"></p>
+        <div class="gameover-stats" id="gameOverStats"></div>
+        <button class="btn start-btn" id="redeployBtn"><span>Redeploy</span><svg viewBox="0 0 32 14" aria-hidden="true"><path d="M1 7h27M22 1l7 6-7 6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+      </div>
+    </section>
+
+    <div class="rotate-hint" aria-hidden="true">
+      <span>↻</span> Landscape gives you a wider field
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
