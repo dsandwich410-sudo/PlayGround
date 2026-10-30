@@ -1,0 +1,19 @@
+{
+  "name": "Satoru Gojo — Infinity Clicker",
+  "short_name": "Gojo Clicker",
+  "description": "A touch-first cursed energy clicker with Black Flash, Domain Expansion and optional Six Eyes tilt control.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#05040c",
+  "theme_color": "#05040c",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

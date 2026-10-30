@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#06050d">
+  <meta name="description" content="Satoru Gojo: Infinity Clicker — a touch-first cursed energy clicker with Black Flash, Domain Expansion and optional Six Eyes tilt control.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Gojo Clicker">
+  <title>Satoru Gojo — Infinity Clicker</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="app" class="app">
+    <canvas id="stage" aria-label="Satoru Gojo faces a cursed spirit. Tap anywhere to strike."></canvas>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <header class="topbar">
+      <div class="brand" aria-label="Satoru Gojo, Infinity Clicker">
+        <span class="brand-jp" aria-hidden="true">五条 悟</span>
+        <span class="brand-en">SATORU <b>GOJO</b></span>
+        <span class="brand-sub">INFINITY CLICKER</span>
+      </div>
+      <div class="top-actions">
+        <div class="energy-pill" aria-live="polite" aria-label="Cursed energy">
+          <span class="energy-orb" aria-hidden="true"></span>
+          <span class="energy-val" id="energyVal">0</span>
+          <span class="energy-label">CE</span>
+        </div>
+        <button class="icon-btn" id="tiltBtn" type="button" aria-pressed="false" aria-label="Enable Six Eyes tilt control">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M3 8l2-2m-2 2l2 2M21 16l-2-2m2 2l-2 2"/><path d="M10 18.5h4"/></svg>
+          <span class="icon-label">TILT</span>
+          <i class="status-dot" aria-hidden="true"></i>
+        </button>
+        <button class="icon-btn" id="soundBtn" type="button" aria-pressed="true" aria-label="Mute sound">
+          <svg class="ico-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+          <svg class="ico-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9l5 6m0-6l-5 6"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="target" id="targetPanel" aria-label="Current curse">
+      <div class="target-line">
+        <span class="grade" id="grade">GRADE 4</span>
+        <span class="curse-name" id="curseName">FLY HEAD</span>
+        <span class="curse-lv" id="curseLv">LV.1</span>
+      </div>
+      <div class="hp-track">
+        <div class="hp-lag" id="hpLag"></div>
+        <div class="hp-fill" id="hpFill"></div>
+        <span class="hp-text" id="hpText">10 / 10</span>
+      </div>
+    </section>
+
+    <div class="combo" id="combo" aria-live="off">
+      <div class="combo-main"><span class="combo-x">×</span><span id="comboVal">1.00</span></div>
+      <div class="combo-sub"><span id="comboHits">0 HIT CHAIN</span><span class="combo-best" id="comboBest"></span></div>
+      <div class="combo-track"><i id="comboBar"></i></div>
+    </div>
+
+    <div class="domain-callout" id="domainCallout" aria-hidden="true">
+      <span>DOMAIN EXPANSION</span>
+      <b>UNLIMITED VOID</b>
+    </div>
+
+    <div class="blackflash" id="blackflash" aria-hidden="true">
+      <span>BLACK</span><b>FLASH</b>
+    </div>
+
+    <div class="killcallout" id="killcallout" aria-hidden="true"></div>
+
+    <div class="hint" id="hint" aria-hidden="true"><span class="hint-ring"></span><span>TAP THE CURSE</span></div>
+
+    <footer class="bottombar">
+      <button class="upgrade-btn" id="upgradesBtn" type="button" aria-label="Open cursed technique upgrades">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17l5-6 4 3 6-8"/><path d="M15 6h4v4"/></svg>
+        <span>UPGRADES</span>
+        <i class="notify" id="upgradeNotify" aria-hidden="true"></i>
+      </button>
+      <div class="readout" aria-label="Combat statistics">
+        <div><small>TAP DMG</small><b id="tapDmg">1</b></div>
+        <i class="divider" aria-hidden="true"></i>
+        <div><small>AUTO / SEC</small><b id="dpsVal">0</b></div>
+        <i class="divider" aria-hidden="true"></i>
+        <div><small>EXORCISED</small><b id="exorcised">0</b></div>
+      </div>
+      <button class="domain-btn" id="domainBtn" type="button" disabled aria-label="Domain Expansion, Unlimited Void">
+        <span class="domain-ring" aria-hidden="true"><i id="domainRing"></i></span>
+        <span class="domain-txt"><small>DOMAIN</small><b>UNLIMITED<br>VOID</b></span>
+        <span class="domain-pct" id="domainPct">0%</span>
+      </button>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <div class="sheet-wrap" id="sheetWrap" hidden>
+      <div class="scrim" data-close-sheet></div>
+      <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+        <div class="sheet-grip" aria-hidden="true"></div>
+        <header class="sheet-head">
+          <div>
+            <small>CURSED TECHNIQUE</small>
+            <h2 id="sheetTitle">Enhance</h2>
+          </div>
+          <div class="sheet-energy" aria-label="Cursed energy">
+            <span class="energy-orb" aria-hidden="true"></span>
+            <b id="sheetEnergy">0</b>
+          </div>
+          <button class="sheet-close" data-close-sheet type="button" aria-label="Close upgrades">×</button>
+        </header>
+        <div class="upgrade-list" id="upgradeList"></div>
+        <footer class="sheet-foot">
+          <span id="bestChain">Best chain: 0</span>
+          <button id="resetBtn" type="button">Reset run</button>
+        </footer>
+      </section>
+    </div>
+
+    <section class="intro" id="intro" aria-labelledby="introTitle">
+      <div class="intro-bg" aria-hidden="true"></div>
+      <div class="intro-inner">
+        <div class="intro-side" aria-hidden="true">
+          <span>五</span><span>条</span><span>悟</span>
+          <i></i>
+        </div>
+        <div class="intro-content">
+          <p class="intro-kicker"><span></span> JUJUTSU HIGH · SPECIAL GRADE</p>
+          <div class="intro-title" id="introTitle">
+            <span>SATORU</span>
+            <b>GOJO</b>
+          </div>
+          <p class="intro-sub">INFINITY CLICKER</p>
+          <p class="intro-copy">The strongest doesn't dodge. Tap to exorcise curses, chain hits for a <b>Black Flash</b>, and flood the meter to open <b>Unlimited Void</b>.</p>
+          <div class="intro-chips" aria-hidden="true">
+            <span>TAP<span>STRIKE</span></span>
+            <span>←→<span>SIX EYES</span></span>
+            <span>∞<span>DOMAIN</span></span>
+          </div>
+          <div class="intro-controls">
+            <button class="primary" id="startBtn" type="button" data-start>
+              <span id="startLabel">START EXORCISM</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+            <button class="ghost" id="introTiltBtn" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M3 8l2-2m-2 2l2 2M21 16l-2-2m2 2l-2 2"/><path d="M10 18.5h4"/></svg>
+              <span id="introTiltLabel">ENABLE TILT</span>
+              <small>OPTIONAL</small>
+            </button>
+          </div>
+          <p class="intro-tilt-note" id="tiltNote">Six Eyes tilt control uses your device motion sensor. iOS asks for permission.</p>
+          <p class="intro-save" id="introSave" hidden></p>
+          <p class="intro-legal">Fan-made prototype · Not affiliated with Gege Akutami, Shueisha or MAPPA.</p>
+        </div>
+      </div>
+      <div class="intro-corner" aria-hidden="true">THE STRONGEST</div>
+    </section>
+  </main>
+  <script type="module" src="game.js"></script>
+</body>
+</html>

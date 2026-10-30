@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="38%" r="72%">
+      <stop offset="0" stop-color="#241a4a"/>
+      <stop offset="55%" stop-color="#0b0819"/>
+      <stop offset="100%" stop-color="#04030a"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#8ffcff" stop-opacity=".55"/>
+      <stop offset="60%" stop-color="#4b8fff" stop-opacity=".16"/>
+      <stop offset="100%" stop-color="#4b8fff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="hair" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#b9cbe6"/>
+    </linearGradient>
+    <linearGradient id="band" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#05050a"/>
+      <stop offset="50%" stop-color="#1e2330"/>
+      <stop offset="100%" stop-color="#05050a"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <circle cx="256" cy="244" r="210" fill="url(#glow)"/>
+  <path d="M140 250 L112 214 L136 208 L118 166 L154 186 L158 138 L188 174 L208 118 L226 170 L256 108 L276 172 L304 122 L314 180 L350 144 L350 198 L388 174 L370 222 L400 234 L364 264 Q256 304 148 264 Z" fill="url(#hair)"/>
+  <path d="M148 258 Q256 302 364 258 L360 318 Q256 354 152 318 Z" fill="url(#band)"/>
+  <path d="M160 266 Q256 300 352 266" fill="none" stroke="#5f6d8a" stroke-opacity=".6" stroke-width="4"/>
+  <g fill="none" stroke="#8ffcff" stroke-linecap="round">
+    <path d="M150 336 Q256 392 362 336" stroke-opacity=".35" stroke-width="5"/>
+    <path d="M170 358 Q256 406 342 358" stroke-opacity=".22" stroke-width="4"/>
+  </g>
+  <circle cx="256" cy="336" r="13" fill="#8ffcff"/>
+  <circle cx="256" cy="336" r="32" fill="none" stroke="#8ffcff" stroke-opacity=".35" stroke-width="2"/>
+  <text x="256" y="470" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="26" letter-spacing="8" fill="#8ffcff" fill-opacity=".72">SATORU</text>
+</svg>
