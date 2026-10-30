@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#060b0d" />
+<meta name="description" content="GRIDFRONT — a 32×32 touch-first tactical war game with optional tilt camera control." />
+<title>GRIDFRONT — 32×32 Tactical Command</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23070c0e'/%3E%3Cpath d='M6 6h20v20H6z' fill='none' stroke='%234aa8ff' stroke-width='2'/%3E%3Cpath d='M9 16h14M16 9v14' stroke='%23ffc857' stroke-width='2'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body class="modal-open">
+<main id="app">
+  <canvas id="field" aria-label="32 by 32 tactical battlefield. Tap a blue unit to select it."></canvas>
+
+  <div class="scrim top"></div>
+  <div class="scrim bottom"></div>
+  <div class="frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+  <header id="hud">
+    <div class="hud-left">
+      <button id="menuBtn" class="icon-btn" aria-label="Open menu" title="Menu">
+        <span class="burger"><i></i><i></i><i></i></span>
+      </button>
+      <div class="turn-block">
+        <span class="micro-label">TURN</span>
+        <span id="turnNum" class="turn-num">01</span>
+        <span id="sideName" class="side-name"><i class="side-dot"></i>ALLIANCE</span>
+      </div>
+    </div>
+
+    <div class="hud-center">
+      <span class="objective"><i class="obj-mark"></i>CAPTURE THE RED HQ</span>
+      <div class="chips">
+        <span class="chip" title="Cities controlled"><span class="chip-glyph">⌂</span><b id="cityCount">1</b><span class="chip-tail">/ 12</span></span>
+        <span class="chip" title="Command credits"><span class="chip-glyph diamond">◈</span><b id="funds">80</b></span>
+        <span class="chip tilt-chip" id="tiltChip" hidden><span class="tilt-bars"><i></i><i></i><i></i></span>TILT</span>
+      </div>
+    </div>
+
+    <button id="endTurn" class="btn-end" type="button">
+      <span class="btn-end-label">END TURN</span>
+      <span class="btn-end-key" aria-hidden="true">▸</span>
+    </button>
+  </header>
+
+  <div id="minimapWrap" aria-label="Tactical minimap">
+    <div class="mini-head"><span>TACTICAL</span><span class="mini-live">● LIVE</span></div>
+    <canvas id="minimap" width="220" height="220"></canvas>
+  </div>
+
+  <div id="banner" role="status" aria-live="polite"><span id="bannerText"></span></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <div id="dock">
+    <section id="hintPanel" class="panel hint-panel">
+      <div class="hint-icon" aria-hidden="true"><span></span></div>
+      <div class="hint-copy">
+        <b id="hintTitle">COMMAND AWAITING</b>
+        <span id="hintText">Tap a blue unit to issue orders.</span>
+      </div>
+      <div class="hint-gestures" aria-hidden="true">
+        <span><i class="g-drag"></i>PAN</span>
+        <span><i class="g-pinch"></i>ZOOM</span>
+      </div>
+    </section>
+
+    <section id="unitPanel" class="panel unit-panel hidden" aria-live="polite">
+      <div class="unit-ident">
+        <span id="unitSide" class="unit-side">ALLIANCE</span>
+        <span id="unitName" class="unit-name">Infantry</span>
+        <span id="unitStatus" class="unit-status">READY</span>
+      </div>
+      <div class="unit-stats">
+        <div class="stat hp-stat"><span class="stat-k">HP</span><span id="unitHp" class="stat-v">100</span><span class="hp-track"><i id="unitHpBar"></i></span></div>
+        <div class="stat"><span class="stat-k">ATK</span><span id="unitAtk" class="stat-v">30</span></div>
+        <div class="stat"><span class="stat-k">MOVE</span><span id="unitMove" class="stat-v">3</span></div>
+        <div class="stat"><span class="stat-k">RNG</span><span id="unitRange" class="stat-v">1</span></div>
+      </div>
+      <div class="unit-actions">
+        <button id="waitBtn" class="btn-ghost" type="button">WAIT</button>
+        <button id="deselectBtn" class="btn-ghost" type="button">CLOSE</button>
+      </div>
+    </section>
+  </div>
+
+  <div id="rail" aria-label="View controls">
+    <button id="zoomIn" class="rail-btn" aria-label="Zoom in" type="button">+</button>
+    <button id="zoomOut" class="rail-btn" aria-label="Zoom out" type="button">−</button>
+    <button id="recenter" class="rail-btn" aria-label="Center on commander" type="button"><span class="recenter-ico"></span></button>
+    <button id="tiltBtn" class="rail-btn tilt-btn" aria-label="Toggle tilt controls" type="button"><span class="tilt-ico"><i></i><i></i><i></i></span></button>
+  </div>
+
+  <section id="recruit" class="sheet hidden" aria-label="Reinforcements">
+    <div class="sheet-grip" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <div>
+        <span class="micro-label">FIELD DEPOT</span>
+        <h2 id="recruitTitle">SECTOR 10·26</h2>
+      </div>
+      <div class="sheet-funds"><span class="diamond">◈</span><b id="recruitFunds">80</b></div>
+    </div>
+    <div id="recruitList" class="recruit-list"></div>
+    <button id="closeRecruit" class="sheet-close" type="button">CANCEL</button>
+  </section>
+
+  <div id="intro" class="overlay">
+    <div class="menu-card">
+      <div class="menu-kicker"><span class="kicker-line"></span>TACTICAL COMMAND · 32 × 32<span class="kicker-line"></span></div>
+      <h1 class="brand">GRID<span>//</span>FRONT</h1>
+      <p class="tagline">Two command posts. Twelve cities.<br />One field, thirty-two squares a side.</p>
+      <p class="brief">Take the red HQ before it takes yours. Move, capture, reinforce, and hold the line.</p>
+
+      <div class="menu-actions">
+        <button id="deployBtn" class="btn-primary" type="button"><span>DEPLOY FORCES</span><i aria-hidden="true">▸</i></button>
+        <button id="tiltToggle" class="btn-secondary tilt-toggle" type="button" aria-pressed="false">
+          <span class="tilt-ico"><i></i><i></i><i></i></span>
+          <span id="tiltToggleLabel">TILT CONTROLS · OFF</span>
+        </button>
+      </div>
+
+      <details class="manual">
+        <summary><span>FIELD MANUAL</span><i aria-hidden="true">+</i></summary>
+        <div class="manual-body">
+          <div class="manual-row"><b>01</b><p>Tap a blue unit, then a highlighted tile to move. Tap a red unit inside your range to fire. Moving and firing are one order each per turn.</p></div>
+          <div class="manual-row"><b>02</b><p>Forest and hills give cover. Water is impassable. Artillery fires 2–4 tiles away but cannot shoot after moving.</p></div>
+          <div class="manual-row"><b>03</b><p>End a move on a city to capture it. Cities pay <em>◈8</em> each turn and repair garrisoned units. Tap an owned, empty city to reinforce.</p></div>
+          <div class="manual-row"><b>04</b><p>Drag to pan, pinch to zoom. On a phone you can enable tilt to pan by leaning. Capture the red HQ — lose yours and the field is lost.</p></div>
+        </div>
+      </details>
+
+      <div class="menu-foot">
+        <span>TOUCH FIRST</span><span class="foot-dot"></span><span>MOUSE + KEYBOARD</span><span class="foot-dot"></span><span>OPTIONAL TILT</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="result" class="overlay hidden">
+    <div class="menu-card result-card">
+      <div id="resultKicker" class="menu-kicker"><span class="kicker-line"></span>OPERATION COMPLETE<span class="kicker-line"></span></div>
+      <h1 id="resultTitle" class="brand result-title">VICTORY</h1>
+      <p id="resultText" class="tagline">The red command post is flying alliance colours.</p>
+      <div id="resultStats" class="result-stats"></div>
+      <div class="menu-actions">
+        <button id="redeployBtn" class="btn-primary" type="button"><span>REDEPLOY</span><i aria-hidden="true">▸</i></button>
+      </div>
+      <div class="menu-foot"><span>GRIDFRONT</span><span class="foot-dot"></span><span>32 × 32</span></div>
+    </div>
+  </div>
+
+  <div id="pause" class="overlay hidden">
+    <div class="menu-card pause-card">
+      <div class="menu-kicker"><span class="kicker-line"></span>COMMAND PAUSED<span class="kicker-line"></span></div>
+      <h2 class="pause-title">OPERATIONS</h2>
+      <div class="pause-actions">
+        <button id="resumeBtn" class="btn-primary" type="button"><span>RESUME</span><i aria-hidden="true">▸</i></button>
+        <button id="soundBtn" class="btn-secondary" type="button">SOUND · ON</button>
+        <button id="pauseTiltBtn" class="btn-secondary" type="button">TILT · OFF</button>
+        <button id="restartBtn" class="btn-secondary danger" type="button">RESTART BATTLE</button>
+      </div>
+      <div class="menu-foot"><span>TIP: PRESS ESC TO RESUME</span></div>
+    </div>
+  </div>
+</main>
+<script type="module" src="js/game.js"></script>
+</body>
+</html>
