@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#f5ddc0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="description" content="Mochi's Room — a cozy pocket-cat simulator. Pet, feed, play, and tilt the toy." />
+  <title>Mochi's Room — A Cozy Kitty</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23f9e3c4'/%3E%3Cpath d='M15 25 11 8c0-2 2-3 4-2l11 8M49 25 53 8c0-2-2-3-4-2L38 14' fill='%23f6a15c' stroke='%235b3522' stroke-width='3' stroke-linejoin='round'/%3E%3Cpath d='M12 34c0-13 9-19 20-19s20 6 20 19-9 20-20 20-20-7-20-20Z' fill='%23f6a15c' stroke='%235b3522' stroke-width='3'/%3E%3Cpath d='M24 33c2 2 2 5 0 7M40 33c-2 2-2 5 0 7' fill='none' stroke='%233a2519' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M32 45c-1 3-4 3-6 1M32 45c1 3 4 3 6 1' fill='none' stroke='%238f444c' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Icon sprite -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-fish" viewBox="0 0 24 24">
+        <path d="M2.6 12c2.8 0 4.6-3.7 8.2-3.7 3.9 0 6.8 2 8.2 3.7-1.4 1.7-4.3 3.7-8.2 3.7-3.6 0-5.4-3.7-8.2-3.7Z" />
+        <path d="M19 12l2.6-3.3v6.6L19 12Z" />
+        <circle cx="8.1" cy="11" r=".9" fill="currentColor" stroke="none" />
+      </symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24">
+        <path d="M12 20.4S3.7 15.7 3.7 9.9c0-2.8 2.1-4.8 4.7-4.8 1.7 0 3 .9 3.6 2.1.6-1.2 1.9-2.1 3.6-2.1 2.6 0 4.7 2 4.7 4.8 0 5.8-8.3 10.5-8.3 10.5Z" />
+      </symbol>
+      <symbol id="i-bolt" viewBox="0 0 24 24">
+        <path d="M13.2 2.5 4.8 13.6h5.6l-1.1 7.9 8.9-11.6h-5.7l.7-7.4Z" />
+      </symbol>
+      <symbol id="i-sparkle" viewBox="0 0 24 24">
+        <path d="M12 2.8c.6 4.8 1.8 6.4 6.7 7.2-4.9.8-6.1 2.4-6.7 7.2-.6-4.8-1.8-6.4-6.7-7.2 4.9-.8 6.1-2.4 6.7-7.2Z" />
+        <path d="M19 15.4c.3 2.4.9 3.2 3.3 3.6-2.4.4-3 1.2-3.3 3.6-.3-2.4-.9-3.2-3.3-3.6 2.4-.4 3-1.2 3.3-3.6Z" />
+      </symbol>
+      <symbol id="i-bowl" viewBox="0 0 24 24">
+        <path d="M3.4 11.5h17.2c.5 0 .8.5.7 1l-1.5 6.2a2 2 0 0 1-2 1.5H6.2a2 2 0 0 1-2-1.5l-1.5-6.2c-.1-.5.2-1 .7-1Z" />
+        <path d="M6.4 8.7c1.3-1.9 3.3-2.9 5.6-2.9s4.3 1 5.6 2.9" />
+        <circle cx="9" cy="9.2" r=".8" fill="currentColor" stroke="none" />
+        <circle cx="13.4" cy="8" r=".8" fill="currentColor" stroke="none" />
+        <circle cx="16.5" cy="9.9" r=".8" fill="currentColor" stroke="none" />
+      </symbol>
+      <symbol id="i-feather" viewBox="0 0 24 24">
+        <path d="M4 20.2c4.9-1 9.2-4.3 11.6-8.7 1.5-2.8 2.3-5.6 2.2-7.8-2.3-.2-5.1.6-7.9 2.1C5.5 8.2 2.2 12.5 1.2 17.5L4 20.2Z" />
+        <path d="M4.3 19.9 15.2 9" />
+        <path d="M7.2 16.6c1.8.2 3.7-.3 5.2-1.4M9.8 13.9c1.5.1 3.1-.3 4.4-1.2" />
+      </symbol>
+      <symbol id="i-brush" viewBox="0 0 24 24">
+        <rect x="8.2" y="2.6" width="7.6" height="9.2" rx="3.8" />
+        <path d="M8.7 11.8h6.6v2.7c0 3.3-1.2 5.9-3.3 7.2-2.1-1.3-3.3-3.9-3.3-7.2v-2.7Z" />
+        <path d="M10.4 14v2.7M13.6 14v2.7" />
+      </symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24">
+        <path d="M20.1 14.6A8.4 8.4 0 0 1 9.4 3.9a8.8 8.8 0 1 0 10.7 10.7Z" />
+        <path d="M17.6 4.2v2.2M16.5 5.3h2.2" />
+      </symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4.2" />
+        <path d="M12 2.4v2M12 19.6v2M2.4 12h2M19.6 12h2M5.2 5.2l1.4 1.4M17.4 17.4l1.4 1.4M18.8 5.2l-1.4 1.4M6.6 17.4l-1.4 1.4" />
+      </symbol>
+      <symbol id="i-gyro" viewBox="0 0 24 24">
+        <rect x="6.2" y="2.8" width="11.6" height="18.4" rx="3" />
+        <path d="M10 5.8h4" />
+        <path d="M8.5 14.4a4 4 0 0 0 6.8 1.7" />
+        <path d="M15.7 13.2v3.2h-3.1" />
+      </symbol>
+      <symbol id="i-sound" viewBox="0 0 24 24">
+        <path d="M4 9.5h3.2L12 5.7v12.6l-4.8-3.8H4a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1Z" />
+        <path d="M15.5 9.1a4.2 4.2 0 0 1 0 5.8M18.3 6.5a8 8 0 0 1 0 11" />
+      </symbol>
+      <symbol id="i-muted" viewBox="0 0 24 24">
+        <path d="M4 9.5h3.2L12 5.7v12.6l-4.8-3.8H4a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1Z" />
+        <path d="m16 9.5 5 5M21 9.5l-5 5" />
+      </symbol>
+      <symbol id="i-help" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M9.4 9.2a2.7 2.7 0 0 1 5.2.9c0 1.9-2.6 2.2-2.6 4" />
+        <circle cx="12" cy="17.4" r=".9" fill="currentColor" stroke="none" />
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24">
+        <path d="m6 6 12 12M18 6 6 18" />
+      </symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24">
+        <path d="M4.5 12h15M13.5 6l6 6-6 6" />
+      </symbol>
+      <symbol id="i-paw" viewBox="0 0 24 24">
+        <ellipse cx="7" cy="8.6" rx="2.1" ry="2.7" />
+        <ellipse cx="12" cy="6.9" rx="2.1" ry="2.8" />
+        <ellipse cx="17" cy="8.6" rx="2.1" ry="2.7" />
+        <path d="M12 11.3c3.1 0 5.7 2.5 5.7 5.1 0 1.9-1.4 2.9-3.1 2.9-1 0-1.8-.5-2.6-.5s-1.6.5-2.6.5c-1.7 0-3.1-1-3.1-2.9 0-2.6 2.6-5.1 5.7-5.1Z" />
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <path d="m5 12.4 4.4 4.4L19 6.8" />
+      </symbol>
+      <symbol id="i-hand" viewBox="0 0 24 24">
+        <path d="M8.5 11.4V5.6a1.4 1.4 0 0 1 2.8 0v5.1-7a1.4 1.4 0 0 1 2.8 0v7-5.5a1.4 1.4 0 0 1 2.8 0v6.3-3.4a1.4 1.4 0 0 1 2.8 0v5.5c0 3.7-2.7 6.8-6.4 6.8h-1.1c-2.1 0-3.9-1-5-2.7L3.7 13a1.5 1.5 0 0 1 2.2-2l2.6 2.6" />
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="app" id="app">
+    <!-- The room -->
+    <div class="scene" id="scene" data-time="day">
+      <div class="room-glow" aria-hidden="true"></div>
+      <div class="wall" aria-hidden="true">
+        <span class="wall-dot" style="--x:12%;--y:34%;--s:5px"></span>
+        <span class="wall-dot" style="--x:27%;--y:63%;--s:4px"></span>
+        <span class="wall-dot" style="--x:44%;--y:29%;--s:3px"></span>
+        <span class="wall-dot" style="--x:61%;--y:54%;--s:4px"></span>
+        <span class="wall-dot" style="--x:72%;--y:26%;--s:5px"></span>
+        <span class="wall-dot" style="--x:86%;--y:61%;--s:3px"></span>
+      </div>
+
+      <div class="lights" aria-hidden="true">
+        <svg viewBox="0 0 1000 130" preserveAspectRatio="none">
+          <path d="M-20 18 C 200 78, 420 4, 620 46 S 910 76, 1020 30" fill="none" stroke="#7f5c46" stroke-width="2.4" opacity=".55" />
+          <g class="bulbs">
+            <circle cx="95" cy="49" r="7" />
+            <circle cx="230" cy="55" r="7" />
+            <circle cx="370" cy="27" r="7" />
+            <circle cx="520" cy="31" r="7" />
+            <circle cx="665" cy="50" r="7" />
+            <circle cx="810" cy="58" r="7" />
+            <circle cx="935" cy="43" r="7" />
+          </g>
+        </svg>
+      </div>
+
+      <div class="window" aria-hidden="true">
+        <div class="curtain curtain-l"></div>
+        <div class="curtain curtain-r"></div>
+        <div class="sky">
+          <span class="star s1"></span><span class="star s2"></span><span class="star s3"></span>
+          <span class="sun-moon"></span>
+          <span class="cloud cloud-1"></span>
+          <span class="cloud cloud-2"></span>
+          <span class="hill hill-back"></span>
+          <span class="hill hill-front"></span>
+        </div>
+        <div class="window-frame-v"></div>
+        <div class="window-frame-h"></div>
+        <div class="sill">
+          <span class="pot"><span class="leaf l1"></span><span class="leaf l2"></span><span class="leaf l3"></span></span>
+        </div>
+      </div>
+
+      <div class="shelf" aria-hidden="true">
+        <div class="shelf-board"></div>
+        <div class="book b1"></div>
+        <div class="book b2"></div>
+        <div class="book b3"></div>
+        <div class="jar"><span></span></div>
+        <div class="trailing-plant"><i></i><i></i><i></i><i></i></div>
+        <div class="shelf-bracket"></div>
+      </div>
+
+      <div class="picture" aria-hidden="true">
+        <div class="picture-mat">
+          <svg viewBox="0 0 60 60"><path d="M13 33c6 0 9-8 17-8 8 0 15 4 18 8-3 4-10 8-18 8-8 0-11-8-17-8Z" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M48 33l6-6v12l-6-6Z" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="25" cy="30" r="1.6" fill="currentColor"/></svg>
+        </div>
+      </div>
+
+      <div class="wall-clock" aria-hidden="true">
+        <span class="clock-ear ce-l"></span>
+        <span class="clock-ear ce-r"></span>
+        <div class="clock-face">
+          <span class="clock-tick t12"></span><span class="clock-tick t3"></span><span class="clock-tick t6"></span><span class="clock-tick t9"></span>
+          <span class="clock-hand hour" id="clockHour"></span>
+          <span class="clock-hand minute" id="clockMinute"></span>
+          <span class="clock-pin"></span>
+        </div>
+      </div>
+
+      <div class="floor-plant" aria-hidden="true">
+        <span class="fp-leaf l1"></span><span class="fp-leaf l2"></span><span class="fp-leaf l3"></span><span class="fp-leaf l4"></span><span class="fp-leaf l5"></span>
+        <span class="fp-pot"></span>
+      </div>
+
+      <div class="yarn-basket" aria-hidden="true">
+        <span class="yarn y1"></span><span class="yarn y2"></span><span class="yarn y3"></span>
+        <span class="basket"></span>
+      </div>
+
+      <div class="floor" aria-hidden="true">
+        <div class="baseboard"></div>
+        <div class="floor-line fl1"></div>
+        <div class="floor-line fl2"></div>
+        <div class="floor-line fl3"></div>
+        <div class="floor-line fl4"></div>
+      </div>
+
+      <div class="rug" aria-hidden="true"></div>
+
+      <div class="beam beam-1" aria-hidden="true"></div>
+      <div class="beam beam-2" aria-hidden="true"></div>
+      <div class="motes" aria-hidden="true">
+        <i style="--x:23%;--y:38%;--d:9s;--delay:-2s"></i>
+        <i style="--x:62%;--y:31%;--d:12s;--delay:-6s"></i>
+        <i style="--x:74%;--y:55%;--d:10s;--delay:-4s"></i>
+        <i style="--x:41%;--y:67%;--d:13s;--delay:-8s"></i>
+        <i style="--x:52%;--y:23%;--d:11s;--delay:-1s"></i>
+      </div>
+
+      <div class="lamp-glow" aria-hidden="true"></div>
+
+      <!-- The cat -->
+      <div class="cat-anchor" id="catAnchor">
+        <div class="mood-bubble" id="moodBubble" role="status" aria-live="polite">
+          <span class="bubble-icon" id="bubbleIcon"></span>
+          <span class="bubble-text" id="bubbleText">Feeling cozy</span>
+        </div>
+
+        <div class="cat-shadow"></div>
+
+        <div class="cat-wrap" id="catWrap" data-pose="idle">
+          <svg class="cat-svg" viewBox="0 0 360 368" role="img" aria-label="Mochi the cat">
+            <defs>
+              <linearGradient id="fur" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ffc381" />
+                <stop offset=".55" stop-color="#f6a15c" />
+                <stop offset="1" stop-color="#e98644" />
+              </linearGradient>
+              <linearGradient id="furDark" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#f7a75f" />
+                <stop offset="1" stop-color="#d97638" />
+              </linearGradient>
+              <linearGradient id="cream" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#fff6e5" />
+                <stop offset="1" stop-color="#ffe3bb" />
+              </linearGradient>
+              <linearGradient id="collar" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#70d2c2" />
+                <stop offset="1" stop-color="#2e9b92" />
+              </linearGradient>
+              <radialGradient id="blush" cx=".5" cy=".5" r=".5">
+                <stop offset="0" stop-color="#f78da0" stop-opacity=".8" />
+                <stop offset="1" stop-color="#f78da0" stop-opacity="0" />
+              </radialGradient>
+              <filter id="catShadow" x="-20%" y="-20%" width="140%" height="160%">
+                <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#8a4b25" flood-opacity=".18" />
+              </filter>
+            </defs>
+
+            <g class="cat-all" filter="url(#catShadow)">
+              <!-- tail -->
+              <g class="tail">
+                <path d="M238 291 C306 306 344 277 333 239 C325 211 293 198 278 216 C266 231 280 251 300 247" fill="none" stroke="#c96b32" stroke-width="34" stroke-linecap="round" />
+                <path d="M238 291 C306 306 344 277 333 239 C325 211 293 198 278 216 C266 231 280 251 300 247" fill="none" stroke="#eda063" stroke-width="24" stroke-linecap="round" />
+                <path d="M250 289 C306 300 334 276 326 246" fill="none" stroke="#f9b77c" stroke-width="7" stroke-linecap="round" opacity=".7" />
+              </g>
+
+              <!-- body -->
+              <g class="body">
+                <ellipse cx="180" cy="287" rx="91" ry="75" fill="url(#fur)" stroke="#5b3522" stroke-width="5" />
+                <ellipse cx="180" cy="303" rx="55" ry="55" fill="url(#cream)" />
+                <ellipse cx="126" cy="340" rx="38" ry="18" fill="url(#cream)" stroke="#5b3522" stroke-width="5" />
+                <ellipse cx="234" cy="340" rx="38" ry="18" fill="url(#cream)" stroke="#5b3522" stroke-width="5" />
+                <rect x="132" y="307" width="38" height="48" rx="19" fill="url(#cream)" stroke="#5b3522" stroke-width="5" />
+                <rect x="190" y="307" width="38" height="48" rx="19" fill="url(#cream)" stroke="#5b3522" stroke-width="5" />
+                <path d="M146 338v7M160 338v7M198 338v7M212 338v7" stroke="#d49a6c" stroke-width="3" stroke-linecap="round" />
+                <path d="M136 275c-7 9-8 20-5 30M224 275c7 9 8 20 5 30" stroke="#d8763a" stroke-width="5" stroke-linecap="round" opacity=".55" />
+              </g>
+
+              <!-- dirt spots (shown when grubby) -->
+              <g class="dirt" opacity="0">
+                <ellipse cx="234" cy="284" rx="10" ry="6" fill="#a86a41" opacity=".38" transform="rotate(-18 234 284)" />
+                <ellipse cx="126" cy="306" rx="8" ry="5" fill="#a86a41" opacity=".32" transform="rotate(12 126 306)" />
+                <path d="M150 252c3-4 8-4 11 0" stroke="#a86a41" stroke-width="3" stroke-linecap="round" opacity=".3" />
+              </g>
+
+              <!-- head -->
+              <g class="head-follow">
+                <g class="cat-head">
+                  <g class="ears">
+                    <g class="ear ear-l">
+                      <path d="M122 121 111 59c-1-9 6-13 14-8l48 29" fill="url(#fur)" stroke="#5b3522" stroke-width="5" stroke-linejoin="round" />
+                      <path d="M128 107l-5-31 27 22Z" fill="#f7a9a5" opacity=".82" />
+                    </g>
+                    <g class="ear ear-r">
+                      <path d="M238 121 249 59c1-9-6-13-14-8l-48 29" fill="url(#fur)" stroke="#5b3522" stroke-width="5" stroke-linejoin="round" />
+                      <path d="M232 107l5-31-27 22Z" fill="#f7a9a5" opacity=".82" />
+                    </g>
+                  </g>
+
+                  <path d="M102 148c0-47 34-70 78-70s78 23 78 70c0 49-33 79-78 79s-78-30-78-79Z" fill="url(#fur)" stroke="#5b3522" stroke-width="5" />
+                  <path d="M108 168c-7 4-9 12-5 18 3 4 8 4 12 1M252 168c7 4 9 12 5 18-3 4-8 4-12 1" fill="url(#fur)" stroke="#5b3522" stroke-width="4.5" stroke-linecap="round" />
+                  <path d="M160 88c-1 7-2 12-5 17M180 84v18M200 88c1 7 2 12 5 17" stroke="#d9763a" stroke-width="7" stroke-linecap="round" opacity=".62" />
+                  <path d="M118 119c2 5 2 10 0 15M242 119c-2 5-2 10 0 15" stroke="#e28a4b" stroke-width="4" stroke-linecap="round" opacity=".55" />
+
+                  <!-- eyes -->
+                  <g class="eye-open">
+                    <g class="eye eye-left">
+                      <ellipse cx="145" cy="150" rx="14" ry="16.5" fill="#3a2519" />
+                      <g class="pupil">
+                        <circle cx="149" cy="144" r="5" fill="#fff9ef" />
+                        <circle cx="140" cy="156" r="2.2" fill="#fff9ef" opacity=".8" />
+                      </g>
+                    </g>
+                    <g class="eye eye-right">
+                      <ellipse cx="215" cy="150" rx="14" ry="16.5" fill="#3a2519" />
+                      <g class="pupil">
+                        <circle cx="219" cy="144" r="5" fill="#fff9ef" />
+                        <circle cx="210" cy="156" r="2.2" fill="#fff9ef" opacity=".8" />
+                      </g>
+                    </g>
+                  </g>
+                  <g class="eye-happy">
+                    <path d="M131 153c3-9 7-13 14-13s11 4 14 13" fill="none" stroke="#4b2f1f" stroke-width="5.5" stroke-linecap="round" />
+                    <path d="M201 153c3-9 7-13 14-13s11 4 14 13" fill="none" stroke="#4b2f1f" stroke-width="5.5" stroke-linecap="round" />
+                  </g>
+                  <g class="eye-sleep">
+                    <path d="M130 149c5 7 10 9 15 9s10-2 15-9" fill="none" stroke="#4b2f1f" stroke-width="5" stroke-linecap="round" />
+                    <path d="M200 149c5 7 10 9 15 9s10-2 15-9" fill="none" stroke="#4b2f1f" stroke-width="5" stroke-linecap="round" />
+                  </g>
+                  <g class="brows">
+                    <path d="M131 126c5-4 12-4 17 0M212 126c5-4 12-4 17 0" fill="none" stroke="#b4612f" stroke-width="3.4" stroke-linecap="round" opacity=".7" />
+                  </g>
+
+                  <ellipse cx="180" cy="177" rx="29" ry="20" fill="url(#cream)" opacity=".85" />
+                  <path d="M180 168c5 0 8 3 8 6 0 4-4 7-8 7s-8-3-8-7c0-3 3-6 8-6Z" fill="#d96a72" stroke="#8f444c" stroke-width="2" />
+                  <path d="M180 181v4" stroke="#8f444c" stroke-width="2.4" stroke-linecap="round" />
+                  <g class="mouth-idle">
+                    <path d="M180 185c-1 5-6 6-9 2M180 185c1 5 6 6 9 2" fill="none" stroke="#8f444c" stroke-width="2.6" stroke-linecap="round" />
+                  </g>
+                  <g class="mouth-open">
+                    <ellipse cx="180" cy="189" rx="7" ry="6" fill="#8c454a" />
+                    <ellipse cx="180" cy="192" rx="4" ry="2.6" fill="#f58d9b" />
+                  </g>
+
+                  <path d="M120 171c-14-3-23-1-30 3M119 180c-13 0-22 3-28 7M121 188c-11 2-18 6-23 11" fill="none" stroke="#6b452f" stroke-width="2.2" stroke-linecap="round" opacity=".62" />
+                  <path d="M240 171c14-3 23-1 30 3M241 180c13 0 22 3 28 7M239 188c11 2 18 6 23 11" fill="none" stroke="#6b452f" stroke-width="2.2" stroke-linecap="round" opacity=".62" />
+
+                  <ellipse cx="126" cy="174" rx="15" ry="9" fill="url(#blush)" />
+                  <ellipse cx="234" cy="174" rx="15" ry="9" fill="url(#blush)" />
+
+                  <!-- unlockable accessories -->
+                  <g class="acc acc-flower">
+                    <g transform="translate(112 78) rotate(-18)">
+                      <circle cx="0" cy="-10" r="7" fill="#ffb7c6" stroke="#c96f85" stroke-width="2" />
+                      <circle cx="10" cy="-3" r="7" fill="#ffb7c6" stroke="#c96f85" stroke-width="2" />
+                      <circle cx="6" cy="8" r="7" fill="#ffb7c6" stroke="#c96f85" stroke-width="2" />
+                      <circle cx="-6" cy="8" r="7" fill="#ffb7c6" stroke="#c96f85" stroke-width="2" />
+                      <circle cx="-10" cy="-3" r="7" fill="#ffb7c6" stroke="#c96f85" stroke-width="2" />
+                      <circle cx="0" cy="0" r="5" fill="#ffd46e" stroke="#c48c2e" stroke-width="1.6" />
+                    </g>
+                  </g>
+                  <g class="acc acc-bow">
+                    <g transform="translate(241 133) rotate(16)">
+                      <path d="M0 0c-10-8-19-5-19 4s9 12 19 4Z" fill="#f28da3" stroke="#b9526c" stroke-width="2.4" />
+                      <path d="M0 0c10-8 19-5 19 4s-9 12-19 4Z" fill="#f28da3" stroke="#b9526c" stroke-width="2.4" />
+                      <circle cx="0" cy="4" r="4.5" fill="#ffc4d0" stroke="#b9526c" stroke-width="2" />
+                    </g>
+                  </g>
+                  <g class="acc acc-crown">
+                    <path d="M152 65l8-22 12 14 8-19 8 19 12-14 8 22Z" fill="#ffd25c" stroke="#b78220" stroke-width="3" stroke-linejoin="round" />
+                    <circle cx="180" cy="56" r="3" fill="#f28da3" />
+                  </g>
+                </g>
+              </g>
+
+              <!-- collar -->
+              <g class="collar">
+                <path d="M126 232c15 18 93 18 108 0l-4 19c-18 20-82 20-100 0Z" fill="url(#collar)" stroke="#226c66" stroke-width="3" />
+                <circle cx="180" cy="251" r="8" fill="#ffd25c" stroke="#b78220" stroke-width="2.4" />
+                <circle cx="180" cy="254" r="2.2" fill="#b78220" />
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        <div class="bowl" id="bowl" aria-hidden="true">
+          <svg viewBox="0 0 130 82">
+            <ellipse cx="65" cy="71" rx="48" ry="8" fill="#5c3a25" opacity=".16" />
+            <path d="M14 38h102l-8 27c-2 8-9 13-17 13H39c-8 0-15-5-17-13Z" fill="#63b9ae" stroke="#3f827b" stroke-width="4" />
+            <path d="M20 44h90l-2 7H22Z" fill="#8fd8cd" opacity=".8" />
+            <ellipse cx="65" cy="38" rx="51" ry="11" fill="#f4d9b1" stroke="#3f827b" stroke-width="4" />
+            <ellipse cx="65" cy="37" rx="43" ry="7" fill="#a76c42" opacity=".55" />
+            <circle cx="48" cy="35" r="3.4" fill="#8a5534" /><circle cx="63" cy="32" r="3.1" fill="#9c613d" /><circle cx="78" cy="36" r="3.5" fill="#8a5534" /><circle cx="56" cy="39" r="2.7" fill="#a76c42" /><circle cx="71" cy="40" r="2.7" fill="#9c613d" />
+          </svg>
+        </div>
+
+        <div class="brush" id="brush" aria-hidden="true">
+          <svg viewBox="0 0 92 86">
+            <rect x="30" y="2" width="32" height="48" rx="16" fill="#e9a06e" stroke="#8f512f" stroke-width="3.5" />
+            <path d="M31 49h30v12c0 12-6 20-15 24-9-4-15-12-15-24Z" fill="#f4e2c6" stroke="#8f512f" stroke-width="3.5" />
+            <path d="M37 57v10M46 59v13M55 57v10" stroke="#c5a07a" stroke-width="3" stroke-linecap="round" />
+          </svg>
+        </div>
+
+        <div class="feather-toy" id="featherToy" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <path d="M15 105 87 33" stroke="#8f5c3a" stroke-width="4.5" stroke-linecap="round" />
+            <path d="M88 32c-4-12 3-24 15-25 7-1 13 4 13 11 1 12-11 22-24 21" fill="#7fc9c2" stroke="#3c817c" stroke-width="3.4" />
+            <path d="M88 32c8-2 17-8 22-16" fill="none" stroke="#3c817c" stroke-width="2.2" />
+            <path d="M89 33c-1-8 1-16 6-22" fill="none" stroke="#3c817c" stroke-width="2.2" />
+            <circle cx="103" cy="19" r="3" fill="#ffd25c" />
+          </svg>
+        </div>
+
+      </div>
+
+      <button class="ball" id="ball" type="button" aria-label="Toy ball — drag it or turn on Tilt">
+        <span class="ball-shine"></span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-paw" /></svg>
+      </button>
+
+      <div class="sleep-veil" aria-hidden="true"></div>
+      <div class="particles" id="particles" aria-hidden="true"></div>
+    </div>
+
+    <!-- Top HUD -->
+    <header class="hud-top">
+      <div class="identity">
+        <div class="avatar" aria-hidden="true">
+          <svg viewBox="0 0 64 64">
+            <path d="M15 25 11 8c0-2 2-3 4-2l11 8" fill="#f6a15c" stroke="#5b3522" stroke-width="2.6" stroke-linejoin="round" />
+            <path d="M49 25 53 8c0-2-2-3-4-2L38 14" fill="#f6a15c" stroke="#5b3522" stroke-width="2.6" stroke-linejoin="round" />
+            <path d="M12 34c0-13 9-19 20-19s20 6 20 19-9 20-20 20-20-7-20-20Z" fill="#f6a15c" stroke="#5b3522" stroke-width="2.6" />
+            <path d="M24 33c2 2 2 5 0 7M40 33c-2 2-2 5 0 7" fill="none" stroke="#3a2519" stroke-width="3.4" stroke-linecap="round" />
+            <path d="M32 40c2 0 3 1 3 2 0 2-3 3-3 3s-3-1-3-3c0-1 1-2 3-2Z" fill="#d96a72" />
+            <ellipse cx="21" cy="41" rx="5" ry="3" fill="#f78da0" opacity=".55" />
+            <ellipse cx="43" cy="41" rx="5" ry="3" fill="#f78da0" opacity=".55" />
+            <path d="M32 45c-1 3-4 3-6 1M32 45c1 3 4 3 6 1" fill="none" stroke="#8f444c" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+        </div>
+        <div class="identity-copy">
+          <div class="name-row">
+            <h1 class="js-name">Mochi</h1>
+            <span class="level-chip">Lv <span id="levelNum">1</span></span>
+          </div>
+          <div class="xp" aria-hidden="true"><span id="xpFill"></span></div>
+        </div>
+      </div>
+
+      <div class="needs" aria-label="Mochi's needs">
+        <div class="need" data-need="hunger">
+          <span class="need-icon"><svg viewBox="0 0 24 24"><use href="#i-fish" /></svg></span>
+          <div class="need-body">
+            <div class="need-line"><span class="need-name">Fullness</span><span class="need-val" data-val>78</span></div>
+            <div class="need-bar"><i></i></div>
+          </div>
+        </div>
+        <div class="need" data-need="happiness">
+          <span class="need-icon"><svg viewBox="0 0 24 24"><use href="#i-heart" /></svg></span>
+          <div class="need-body">
+            <div class="need-line"><span class="need-name">Happiness</span><span class="need-val" data-val>82</span></div>
+            <div class="need-bar"><i></i></div>
+          </div>
+        </div>
+        <div class="need" data-need="energy">
+          <span class="need-icon"><svg viewBox="0 0 24 24"><use href="#i-bolt" /></svg></span>
+          <div class="need-body">
+            <div class="need-line"><span class="need-name">Energy</span><span class="need-val" data-val>74</span></div>
+            <div class="need-bar"><i></i></div>
+          </div>
+        </div>
+        <div class="need" data-need="clean">
+          <span class="need-icon"><svg viewBox="0 0 24 24"><use href="#i-sparkle" /></svg></span>
+          <div class="need-body">
+            <div class="need-line"><span class="need-name">Clean</span><span class="need-val" data-val>88</span></div>
+            <div class="need-bar"><i></i></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button class="icon-btn" id="soundBtn" type="button" aria-label="Mute sound" aria-pressed="false">
+          <svg class="icon-sound" viewBox="0 0 24 24"><use href="#i-sound" /></svg>
+          <svg class="icon-muted" viewBox="0 0 24 24"><use href="#i-muted" /></svg>
+        </button>
+        <button class="icon-btn" id="helpBtn" type="button" aria-label="How to play">
+          <svg viewBox="0 0 24 24"><use href="#i-help" /></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Bottom controls -->
+    <footer class="dock" aria-label="Care actions">
+      <div class="dock-inner">
+        <button class="action" type="button" data-action="feed" aria-label="Feed Mochi">
+          <span class="action-icon icon-feed"><svg viewBox="0 0 24 24"><use href="#i-bowl" /></svg></span>
+          <span class="action-label">Feed</span>
+          <span class="alert-dot" aria-hidden="true"></span>
+        </button>
+        <button class="action" type="button" data-action="play" aria-label="Play with Mochi">
+          <span class="action-icon icon-play"><svg viewBox="0 0 24 24"><use href="#i-feather" /></svg></span>
+          <span class="action-label">Play</span>
+          <span class="alert-dot" aria-hidden="true"></span>
+        </button>
+        <button class="action" type="button" data-action="groom" aria-label="Brush Mochi">
+          <span class="action-icon icon-groom"><svg viewBox="0 0 24 24"><use href="#i-brush" /></svg></span>
+          <span class="action-label">Brush</span>
+          <span class="alert-dot" aria-hidden="true"></span>
+        </button>
+        <button class="action" type="button" data-action="sleep" id="napBtn" aria-label="Let Mochi nap">
+          <span class="action-icon icon-sleep">
+            <svg class="icon-nap" viewBox="0 0 24 24"><use href="#i-moon" /></svg>
+            <svg class="icon-wake" viewBox="0 0 24 24"><use href="#i-sun" /></svg>
+          </span>
+          <span class="action-label">Nap</span>
+          <span class="alert-dot" aria-hidden="true"></span>
+        </button>
+        <button class="action action-tilt" type="button" id="tiltBtn" aria-label="Turn on motion tilt for the toy" aria-pressed="false">
+          <span class="action-icon icon-tilt"><svg viewBox="0 0 24 24"><use href="#i-gyro" /></svg></span>
+          <span class="action-label">Tilt</span>
+          <span class="tilt-state" aria-hidden="true"></span>
+        </button>
+      </div>
+    </footer>
+
+    <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+  </div>
+
+  <!-- Intro -->
+  <div class="intro" id="intro">
+    <div class="intro-sun" aria-hidden="true"></div>
+    <div class="intro-card">
+      <div class="intro-art" aria-hidden="true">
+        <div class="arch">
+          <span class="arch-spark a1">✦</span>
+          <span class="arch-spark a2">✦</span>
+          <span class="arch-spark a3">✦</span>
+          <svg class="intro-cat" viewBox="0 0 260 250">
+            <defs>
+              <linearGradient id="introFur" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ffc98b" />
+                <stop offset="1" stop-color="#ea8d48" />
+              </linearGradient>
+              <linearGradient id="introCream" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#fff7e7" />
+                <stop offset="1" stop-color="#ffe3bb" />
+              </linearGradient>
+              <radialGradient id="introBlush" cx=".5" cy=".5" r=".5">
+                <stop offset="0" stop-color="#f78da0" stop-opacity=".8" />
+                <stop offset="1" stop-color="#f78da0" stop-opacity="0" />
+              </radialGradient>
+            </defs>
+            <path d="M82 104 64 38c-2-10 7-15 16-9l45 29" fill="url(#introFur)" stroke="#5b3522" stroke-width="6" stroke-linejoin="round" />
+            <path d="M178 104l18-66c2-10-7-15-16-9l-45 29" fill="url(#introFur)" stroke="#5b3522" stroke-width="6" stroke-linejoin="round" />
+            <path d="M88 86 80 51l28 21Z" fill="#f7a9a5" />
+            <path d="M172 86l8-35-28 21Z" fill="#f7a9a5" />
+            <path d="M55 143c0-51 36-76 75-76s75 25 75 76c0 52-35 83-75 83s-75-31-75-83Z" fill="url(#introFur)" stroke="#5b3522" stroke-width="6" />
+            <path d="M108 78c-1 7-2 12-5 18M130 74v19M152 78c1 7 2 12 5 18" stroke="#d9763a" stroke-width="7" stroke-linecap="round" opacity=".6" />
+            <g class="intro-eye">
+              <ellipse cx="103" cy="143" rx="12" ry="15" fill="#3a2519" />
+              <circle cx="107" cy="138" r="4.6" fill="#fff9ef" />
+              <ellipse cx="159" cy="143" rx="12" ry="15" fill="#3a2519" />
+              <circle cx="163" cy="138" r="4.6" fill="#fff9ef" />
+            </g>
+            <ellipse cx="130" cy="171" rx="30" ry="21" fill="url(#introCream)" opacity=".85" />
+            <path d="M130 161c5 0 8 3 8 6 0 4-4 7-8 7s-8-3-8-7c0-3 3-6 8-6Z" fill="#d96a72" stroke="#8f444c" stroke-width="2" />
+            <path d="M130 174v4M130 178c-1 5-6 6-9 2M130 178c1 5 6 6 9 2" fill="none" stroke="#8f444c" stroke-width="2.6" stroke-linecap="round" />
+            <path d="M70 166c-14-3-23-1-30 3M69 175c-13 0-22 3-28 7M71 184c-11 2-18 6-23 11M190 166c14-3 23-1 30 3M191 175c13 0 22 3 28 7M189 184c11 2 18 6 23 11" fill="none" stroke="#6b452f" stroke-width="2.2" stroke-linecap="round" opacity=".62" />
+            <ellipse cx="76" cy="167" rx="14" ry="9" fill="url(#introBlush)" />
+            <ellipse cx="184" cy="167" rx="14" ry="9" fill="url(#introBlush)" />
+            <g transform="translate(66 64) rotate(-16)">
+              <circle cx="0" cy="-10" r="7.5" fill="#ffb7c6" stroke="#c96f85" stroke-width="2" />
+              <circle cx="10" cy="-3" r="7.5" fill="#ffb7c6" stroke="#c96f85" stroke-width="2" />
+              <circle cx="6" cy="8" r="7.5" fill="#ffb7c6" stroke="#c96f85" stroke-width="2" />
+              <circle cx="-6" cy="8" r="7.5" fill="#ffb7c6" stroke="#c96f85" stroke-width="2" />
+              <circle cx="-10" cy="-3" r="7.5" fill="#ffb7c6" stroke="#c96f85" stroke-width="2" />
+              <circle cx="0" cy="0" r="5.5" fill="#ffd46e" stroke="#c48c2e" stroke-width="1.6" />
+            </g>
+          </svg>
+        </div>
+        <span class="intro-heart h1">♥</span>
+        <span class="intro-heart h2">♥</span>
+      </div>
+
+      <div class="intro-copy">
+        <p class="eyebrow">A cozy pocket companion</p>
+        <h1>A tiny cat,<br /><em>all yours.</em></h1>
+        <p class="intro-lede">Pet, feed and play with <span class="js-name">Mochi</span> in a sunny little room. Tilt your phone and the ball rolls with you.</p>
+
+        <label class="name-field">
+          <span>Name your kitty</span>
+          <input id="nameInput" type="text" value="Mochi" maxlength="12" autocomplete="off" spellcheck="false" />
+        </label>
+
+        <button class="start-btn" id="startBtn" type="button">
+          <span>Start</span>
+          <svg viewBox="0 0 24 24"><use href="#i-arrow" /></svg>
+        </button>
+
+        <div class="intro-meta">
+          <span><svg viewBox="0 0 24 24"><use href="#i-paw" /></svg> Touch-first</span>
+          <span><svg viewBox="0 0 24 24"><use href="#i-gyro" /></svg> Tilt toy</span>
+          <span><svg viewBox="0 0 24 24"><use href="#i-heart" /></svg> Saves locally</span>
+        </div>
+      </div>
+    </div>
+    <p class="intro-foot">Best with sound on · No account, no ads</p>
+  </div>
+
+  <!-- Help / settings -->
+  <dialog class="sheet" id="helpSheet" aria-labelledby="helpTitle">
+    <div class="sheet-head">
+      <div>
+        <p class="eyebrow">Care guide</p>
+        <h2 id="helpTitle">Looking after <span class="js-name">Mochi</span></h2>
+      </div>
+      <button class="icon-btn sheet-close" id="closeHelp" type="button" aria-label="Close care guide">
+        <svg viewBox="0 0 24 24"><use href="#i-close" /></svg>
+      </button>
+    </div>
+
+    <ul class="guide">
+      <li>
+        <span class="guide-icon g-pink"><svg viewBox="0 0 24 24"><use href="#i-hand" /></svg></span>
+        <div><strong>Pet</strong><p>Drag a finger across the kitty. Hearts, purrs and happy eyes follow.</p></div>
+      </li>
+      <li>
+        <span class="guide-icon g-gold"><svg viewBox="0 0 24 24"><use href="#i-bowl" /></svg></span>
+        <div><strong>Feed &amp; brush</strong><p>Keep the four little meters happy. A grubby cat gets dusty and a hungry cat gets grumpy.</p></div>
+      </li>
+      <li>
+        <span class="guide-icon g-teal"><svg viewBox="0 0 24 24"><use href="#i-gyro" /></svg></span>
+        <div><strong>Tilt toy</strong><p>Tap <b>Tilt</b> and move your phone to roll the ball. On iPhone and iPad, iOS asks for motion permission first. No sensor? Drag the ball instead.</p></div>
+      </li>
+      <li>
+        <span class="guide-icon g-plum"><svg viewBox="0 0 24 24"><use href="#i-moon" /></svg></span>
+        <div><strong>Naps</strong><p>Naps refill energy while the room dims. Tap <b>Wake</b> whenever you're ready to play.</p></div>
+      </li>
+    </ul>
+
+    <div class="sheet-foot">
+      <button class="switch-row" id="soundRow" type="button" aria-pressed="false">
+        <span><svg viewBox="0 0 24 24"><use href="#i-sound" /></svg> Sound</span>
+        <span class="switch"><i></i></span>
+      </button>
+      <button class="text-btn" id="resetBtn" type="button">Start over</button>
+    </div>
+    <p class="privacy">Everything is saved in this browser only. No account, no tracking.</p>
+  </dialog>
+
+  <div class="rotate-hint" aria-hidden="true">
+    <svg viewBox="0 0 24 24"><use href="#i-gyro" /></svg>
+    <span>Rotate back to portrait for the coziest view</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
